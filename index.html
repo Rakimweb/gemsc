@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Gem Shop Estimator</title>
+      <style>
+        *, *::before, *::after {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+      
+        body {
+          background: #121212;
+          color: #f0f0f0;
+          font-family: 'Inter', sans-serif;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 2rem;
+        }
+      
+        h1 {
+          font-size: 2.25rem;
+          color: #00f0ff;
+          margin-bottom: 1.5rem;
+          font-weight: 700;
+        }
+      
+        .container {
+          width: 100%;
+          max-width: 960px;
+          background: #1f1f1f;
+          padding: 2rem;
+          border-radius: 16px;
+          box-shadow: 0 10px 30px rgba(0, 255, 255, 0.1);
+          margin-bottom: 2rem;
+        }
+      
+        label {
+          display: block;
+          font-size: 1rem;
+          margin-bottom: 0.5rem;
+          color: #bbbbbb;
+        }
+      
+        input[type="number"], input[type="text"] {
+          width: 100%;
+          padding: 0.75rem 1rem;
+          border-radius: 10px;
+          border: 1px solid #333;
+          background: #222;
+          color: #f0f0f0;
+          font-size: 1rem;
+          margin-bottom: 1.5rem;
+          text-align: center;
+        }
+      
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+      
+        input[type="number"] {
+          -moz-appearance: textfield;
+        }
+      
+        .section {
+          margin-bottom: 2rem;
+        }
+      
+        .section h3 {
+          font-size: 1.5rem;
+          color: #00f0ff;
+          margin-bottom: 1rem;
+          font-weight: 600;
+        }
+      
+        .grid-container {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+          gap: 1rem;
+        }
+      
+        .item {
+          background: #292929;
+          padding: 1rem;
+          border-radius: 12px;
+          text-align: center;
+          transition: all 0.2s ease-in-out;
+          width: 250px;
+          margin: 10px;
+        }
+      
+        .item:hover {
+          transform: scale(1.03);
+          background-color: #303030;
+        }
+      
+        .item label {
+          font-weight: 500;
+          color: #e0e0e0;
+          margin-bottom: 0.5rem;
+        }
+      
+        .item input[type="number"] {
+          width: 80%;
+          margin: 0.5rem auto;
+          padding: 0.5rem;
+          font-size: 1rem;
+          border-radius: 8px;
+          background-color: #1c1c1c;
+          border: 1px solid #444;
+          color: #fff;
+        }
+      
+        .button {
+          background-color: #122dc5;
+          color: #121212;
+          font-weight: 600;
+          padding: 0.75rem;
+          border-radius: 12px;
+          border: none;
+          font-size: 1rem;
+          width: 100%;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          margin-top: 1rem;
+        }
+      
+        .button:hover {
+          background-color: #0e00cc;
+        }
+      
+        .checkout-box {
+          background-color: #1e1e1e;
+          padding: 1.5rem;
+          border-radius: 12px;
+          color: #f0f0f0;
+          margin-top: 2rem;
+        }
+      
+        .checkout-header {
+          font-size: 1.5rem;
+          font-weight: bold;
+          margin-bottom: 1rem;
+          color: #00f0ff;
+        }
+      
+        .purchased-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background-color: #292929;
+          padding: 0.75rem;
+          margin-bottom: 0.75rem;
+          border-radius: 10px;
+        }
+      
+        .purchased-item button {
+          background: #ff5252;
+          border: none;
+          padding: 0.5rem 1rem;
+          color: white;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: background 0.3s ease;
+        }
+      
+        .purchased-item button:hover {
+          background: #e53935;
+        }
+      
+        .message {
+          text-align: center;
+          margin-top: 1.5rem;
+          font-size: 1rem;
+        }
+      
+        .message.success {
+          color: #4caf50;
+        }
+      
+        .message.error {
+          color: #ff5722;
+        }
+      
+        .quantity-container {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 0.5rem;
+        }
+      
+        .quantity-container button {
+          background: #0051ff;
+          border: none;
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          color: #121212;
+          font-size: 1.25rem;
+          font-weight: bold;
+          cursor: pointer;
+          transition: background 0.3s ease;
+        }
+      
+        .quantity-container button:hover {
+          background: #00c4cc;
+        }
+      
+        .quantity-container button:active {
+          background: #009ca4;
+        }
+      
+        .quantity-container input {
+          width: 60px;
+          text-align: center;
+          padding: 0.5rem;
+          font-size: 1rem;
+          border-radius: 10px;
+          background-color: #222;
+          border: 1px solid #444;
+          color: #fff;
+        }
+      
+        .confirmation-message {
+          margin-left: 10px;
+          font-size: 0.875rem;
+          color: #b4f4a8;
+          font-weight: bold;
+          opacity: 0;
+          animation: fadeInOut 1.5s ease-out forwards;
+          white-space: pre-line;
+        }
+      
+        @keyframes fadeInOut {
+          0% { opacity: 0; }
+          30% { opacity: 1; }
+          80% { opacity: 1; }
+          100% { opacity: 0; }
+        }
+      
+        .tooltip {
+          position: absolute;
+          bottom: 110%;
+          left: 50%;
+          transform: translateX(-50%);
+          background-color: rgba(0, 0, 0, 0.8);
+          color: white;
+          padding: 5px 8px;
+          border-radius: 5px;
+          font-size: 12px;
+          opacity: 0;
+          visibility: hidden;
+          transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+      
+        .tooltip.show {
+          opacity: 1;
+          visibility: visible;
+        }
+
+
+        .add-remove-buttons button {
+         background-color: #192bce; 
+         color: white;
+         padding: 10px 20px;
+         font-size: 16px;
+         border: none;
+         border-radius: 8px;
+         cursor: pointer;
+         transition: all 0.3s ease;
+         width: 100%; 
+         text-align: center;
+         box-sizing: border-box;
+         }
+         .add-remove-buttons button:hover {
+         background-color: #5187b4; 
+         transform: translateY(-2px); 
+         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+         }
+         .add-remove-buttons button:active {
+         background-color: #1853d3; 
+         transform: translateY(0); 
+         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+         }
+
+         .minus, .plus {
+         font-size: 24px;   
+         width: 5px;      
+         height: 5px;   
+         padding: 5px;      
+         border: none;    
+         background-color: #0b3591; 
+         color: white;     
+         border-radius: 50%; 
+         cursor: pointer; 
+         display: inline-flex;
+         align-items: center; 
+         justify-content: center; 
+         }
+
+
+      </style>
+      
+</head>
+<body>
+   <h1><br><span style="font-size: 18px; color: #9c4d96;"></span></h1>
+   <div class="container">
+      <label for="budget">Enter your budget (Gems):</label>
+      <input type="number" id="budget" name="budget" min="0" value="0" oninput="calculatetotal()">
+      <div class="section">
+         <h3>Boosts</h3>
+         <div class="grid-container" id="boostscontainer"></div>
+      </div>
+      <div class="section">
+         <h3>Cosmetics</h3>
+         <div class="grid-container" id="cosmeticscontainer"></div>
+      </div>
+      <div class="section">
+         <h3>Spins</h3>
+         <div class="grid-container" id="spinscontainer"></div>
+      </div>
+      <div class="section">
+         <h3>Miscellaneous</h3>
+         <div class="grid-container" id="misccontainer"></div>
+      </div>
+      <button class="button" onclick="generatebasketlink()">Copy Link</button>
+      <div class="checkout-box">
+         <div class="checkout-header">Checkout</div>
+         <div id="purchaseditems"></div>
+         <div id="budgetmessage" class="message"></div>
+      </div>
+   </div>
+   <script>
+      const items = [
+          { name: "Scout Fashion", price: 799, category: 'cosmetics' },
+          { name: "Anime All-Stars [3]", price: 1499, category: 'cosmetics' },
+          { name: "Anime All-Stars [4]", price: 1499, category: 'cosmetics' },
+          { name: "Blade Burst", price: 2499, category: 'cosmetics' },
+          { name: "Prestige Scroll", price: 2999, category: 'misc' },
+          { name: "Attack Shard", price: 19999, category: 'misc' },
+          { name: "Armored Shard", price: 24999, category: 'misc' },
+          { name: "Emperor Key", price: 2999, category: 'misc' },
+          { name: "2x XP Boost [30m]", price: 4499, category: 'boosts' },
+          { name: "2x XP Boost [1h]", price: 7999, category: 'boosts' },
+          { name: "2x XP Boost [2h]", price: 13999, category: 'boosts' },
+          { name: "2x Luck Boost [30m]", price: 4499, category: 'boosts' },
+          { name: "2x Luck Boost [1h]", price: 7999, category: 'boosts' },
+          { name: "2x Luck Boost [2h]", price: 13999, category: 'boosts' },
+          { name: "2x Gold Boost [30m]", price: 4499, category: 'boosts' },
+          { name: "2x Gold Boost [1h]", price: 7999, category: 'boosts' },
+          { name: "2x Gold Boost [2h]", price: 13999, category: 'boosts' },
+          { name: "5 Spins", price: 500, category: 'spins' },
+          { name: "25 Spins", price: 2500, category: 'spins' },
+          { name: "100 Spins", price: 10000, category: 'spins' },
+          { name: "250 Spins", price: 25000, category: 'spins' },
+          { name: "500 Spins", price: 50000, category: 'spins' },
+      ];
+      function formatnumber(number) {
+          return number.toLocaleString();
+      }
+      
+      function renderitems() {
+         window.onload = function () {
+         const urlParams = new URLSearchParams(window.location.search);
+         const basketData = urlParams.get("basket");
+         if (basketData) {
+             try {
+                 const decodedBasket = JSON.parse(decodeURIComponent(basketData));
+                 Object.assign(checkoutdata, decodedBasket);
+                 updatecheckoutdisplay();
+                 calculatetotal();
+             } catch (e) {
+                 console.error("Failed to load basket from URL", e);
+             }
+         }
+     };
+          const categories = ['boosts', 'cosmetics', 'spins', 'misc'];
+          categories.forEach(category => {
+              const container = document.getElementById(`${category}container`);
+              const categoryitems = items.filter(item => item.category === category);
+              categoryitems.forEach(item => {
+                  const itemdiv = document.createElement('div');
+                  itemdiv.classList.add('item');
+                  itemdiv.innerHTML = `
+                      <label>${item.name}<br>(${formatnumber(item.price)} Gems)</label>
+                      <div class="quantity-container">
+                          <button class="minus" onclick="updatequantity('${item.name}', -1)">-</button>
+                          <input type="number" id="${item.name}" name="${item.name}" min="0" value="0">
+                          <button class="plus" onclick="updatequantity('${item.name}', 1)">+</button>
+                      </div>
+                      <div class="add-remove-buttons">
+                          <button onclick="addtocheckout('${item.name}', ${item.price})">Add</button>
+                      </div>
+                  `;
+                  container.appendChild(itemdiv);
+              });
+          });
+      }
+      
+      
+      const checkoutdata = {};
+      
+      function addtocheckout(name, price) {
+          const quantity = parseInt(document.getElementById(name).value) || 0;
+          if (quantity <= 0) return;
+      
+          if (checkoutdata[name]) {
+              checkoutdata[name].quantity += quantity;
+          } else {
+              checkoutdata[name] = { price, quantity };
+          }
+      
+          updatecheckoutdisplay();
+          calculatetotal();
+          const itemDiv = document.getElementById(name).closest('.item');
+              
+          if (!itemDiv) return;
+      
+         
+          const addButton = itemDiv.querySelector('.add-remove-buttons button');
+      
+          const confirmationMessage = document.createElement('span');
+          confirmationMessage.textContent = `\n[${quantity}x] ${name} added!`;
+          confirmationMessage.classList.add('confirmation-message');
+          
+          addButton.appendChild(confirmationMessage);
+          setTimeout(() => {
+              confirmationMessage.remove();
+          }, 1500);
+             addButton.style.transition = 'border-color 0.3s ease-in-out';
+             addButton.style.border = '2px solid rgba(180, 244, 168, 1)';
+             setTimeout(() => {
+                 addButton.style.border = '2px solid rgba(76, 175, 80, 0)';
+             }, 500);
+                  
+      }
+      
+      function removefromcheckout(name) {
+      const itemElement = document.querySelector(`#purchaseditems [data-item="${name}"]`);
+      console.log(itemElement);
+      if (itemElement) {
+          itemElement.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+          itemElement.style.transform = 'scaleY(0)';  
+          itemElement.style.opacity = '0';
+      
+          setTimeout(() => {
+              delete checkoutdata[name];
+              updatecheckoutdisplay();
+              calculatetotal();
+          }, 500);
+      }
+      }
+          function updatequantity(name, change) {
+              const input = document.getElementById(name);
+              let currentValue = parseInt(input.value) || 0;
+              currentValue += change;
+              if (currentValue < 0) currentValue = 0;
+              input.value = currentValue;
+              calculatetotal(); 
+          }   
+
+          function generatebasketlink() {
+         const encodedbasket = encodeURIComponent(JSON.stringify(checkoutdata));
+         const shareablelink = `${window.location.origin}${window.location.pathname}?basket=${encodedbasket}`;
+         navigator.clipboard.writeText(shareablelink).then(() => {
+             alert("Basket link copied to clipboard!");
+         });
+         }
+
+      function updatecheckoutdisplay() {
+          const purchaseditemscontainer = document.getElementById('purchaseditems');
+          purchaseditemscontainer.innerHTML = '';
+          Object.entries(checkoutdata).forEach(([name, data]) => {
+              const itemdiv = document.createElement('div');
+              itemdiv.classList.add('purchased-item');
+              itemdiv.setAttribute('data-item', name);
+              itemdiv.innerHTML = `
+                  ${name} (x${data.quantity}) - ${formatnumber(data.price * data.quantity)} Gems
+                  <button onclick="removefromcheckout('${name}')">Remove</button>
+              `;
+              purchaseditemscontainer.appendChild(itemdiv);
+          });
+      }
+      // tbv 
+      function calculatetotal() {
+          const budget = parseInt(document.getElementById('budget').value) || 0;
+          let totalcost = 0;
+          Object.values(checkoutdata).forEach(data => totalcost += data.price * data.quantity);
+      
+          const budgetmessage = document.getElementById('budgetmessage');
+          const remaininggems = budget - totalcost;
+      
+          if (totalcost <= budget) {
+              budgetmessage.className = 'message success';
+              budgetmessage.innerHTML = `Total: ${formatnumber(totalcost)} Gems. Remaining: ${formatnumber(remaininggems)} Gems.`;
+          } else {
+              budgetmessage.className = 'message error';
+              budgetmessage.innerHTML = `Over budget by ${formatnumber(totalcost - budget)} Gems. Total: ${formatnumber(totalcost)} Gems.`;
+          }
+      }
+      renderitems();
+   </script>
+</body>
+</html>
